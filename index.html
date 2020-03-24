@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="icon" href="icon.png" type="image/x-icon" />
+        <!-- Tocas UI：CSS 與元件 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.css">
+        <!-- Tocas JS：模塊與 JavaScript 函式 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.js"></script>
+        <style type="text/css">
+          html, body {
+            font: normal 5px/8px 'helvetica neue' arial;
+            color: #333;
+                  font-family: 'Consolas';
+          }
+        </style>
+         <!-- awesome-qr：QRcode生成建置 -->
+         <script type="text/javascript" src="awesome-qr/require.js"></script>
+        <!-- 主js -->
+        <script src="index.js"></script>
+  </head>
+  <body>
+    <div class="ts top attached small message">
+        <span><i class="book icon"></i>QRcode 範例</span>
+    </div>
+    <div class="ts grid">
+        <div class="two column row">
+            <div class="column">
+                <pre style="background-color: black;color: white;height: 500px;overflow: auto;">
+///////HTML///////////////////
+< img class="ts image" style="width: 300px;height:300px;display: none;" src="06-example_resized.png" id="uploadimage">
+< img class="ts image" style="width: 311px;height:315px" src="06-QRcode_resized.jpg" id="qrcodeimage" >
+
+///////JS///////////////////
+function imgQRcodeCovert(QRcodeUrl){
+    if(nowLoadFileType == 'gif'){
+        require([__awesome_qr_base_path + '/awesome-qr'], function (AwesomeQR) {
+            AwesomeQR.create({
+                text: QRcodeUrl,
+                size: 800,
+                margin: 20,
+                gifBackground: nowLoadFile, 
+                bindElement: 'qrcodeimage'
+            });
+        });  
+    }else{
+        require([__awesome_qr_base_path + '/awesome-qr'], function (AwesomeQR) {
+            AwesomeQR.create({
+                text: QRcodeUrl,
+                size: 800,
+                backgroundImage: document.getElementById("uploadimage"),
+                margin: 20,
+                bindElement: 'qrcodeimage'
+            });
+        });  
+    }
+}
+
+////20200304讀取上傳圖片 || Folder檔案
+var nowLoadFile ="";
+var nowLoadFileType ="";
+function filecheck(FileURL){
+    ts('.snackbar').snackbar({
+        content: '讀取中...'
+    });
+    ///////////20200319新增 GIF 檔案內容(將Blob轉為ArrayBuffer才能讀取)
+    nowLoadFile = FileURL.files[0];
+    let reader = new FileReader();
+    reader.readAsArrayBuffer(nowLoadFile);
+    reader.onload = function () {
+        nowLoadFile = this.result;
+        nowLoadFile = new Uint8Array(nowLoadFile);
+    }
+    //////////////
+
+    nowLoadFileType = FileURL.value.split('.').pop();
+    ///alert(FileURL.value.split('.').pop());
+    if(nowLoadFileType == 'png' || nowLoadFileType == 'jpg' || nowLoadFileType == 'gif' || nowLoadFileType == 'jpeg' ){////檢測檔案格式(圖片)
+        //alert(FileURL.value.split('.').pop());
+        document.getElementById("uploadimage").src = window.URL.createObjectURL(FileURL.files[0]);
+        document.getElementById('qrcodeimage').src = 'loading.gif';
+        imgQRcodeCovert(document.getElementById("QRcode_Url").value);
+    }else{
+        alert("尚未支援"+nowLoadFileType+"格式。");
+    }
+}
+
+                 </pre>
+                </div>
+            
+            <div class="column" style="background-color: black;max-height: 500px;overflow:auto;top:20px">
+                <div class="ts labeled button">
+                    <button class="ts button" onclick="document.getElementById('ex_fileToUpload').click();">
+                        <i class="unhide icon"></i>
+                        上傳
+                    </button>
+                    <input type="file" id="ex_fileToUpload" style='display:none' onchange="filecheck(this)">
+                    <div class="ts underlined input">
+                        <input id="QRcode_Url" type="text" value="https://akakaze.idv.tw/WebCoding/">
+                    </div>                    
+                </div>
+                <img class="ts image" style="width: 300px;height:300px;display: none;" src="06-example_resized.png" id="uploadimage">
+                <img class="ts image" style="width: 311px;height:315px" src="06-QRcode_resized.jpg" id="qrcodeimage" >
+            </div>
+        </div>
+    </div>
+    
+    <div class="ts grid">
+        <div class="row">
+            <div class="column">
+                <img class="ts image" style="width: 200px;height:200px;transform: scaleX(-1);" src="06-example_resized.png" id="uploadimage">
+            </div>
+            <div class="nine wide column">
+                <!-- 標題 -->
+                <div class="ts huge dividing header">QRcode轉換</div>
+                <!-- / 標題 -->
+                <p>改寫自<strong><a href="https://github.com/SumiMakito/Awesome-qr.js">SumiMakito</a>的Awesome-qr套件</strong></p>
+                <p>過往版本對於GIF未補充執行方法，在此版本補上，
+                <br>input file 格式為Blob，因此加入Blob轉ArrayBuffer方法，</p>
+                <p>當前版本已針對目前瀏覽器版本做優化及改良。</p>
+                <p><strong>若這邊不夠清晰，可至<a href="https://github.com/city8208/QRcodeJS">Github</a> 觀看。</strong></p>
+            </div>
+        </div>
+    </div>
+  </body>
+  </html>
