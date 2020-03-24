@@ -1,4 +1,4 @@
-<img class="ts image" style="width: 200px;height:200px;transform: scaleX(-1);" src="06-example_resized.png" id="uploadimage">
+<img class="ts image" style="width: 200px;height:200px;transform: scaleX(-1);" src="06-QRcode_resized.jpg" id="uploadimage">
                 <div class="ts huge dividing header">QRcode轉換</div>
                 <!-- / 標題 -->
                 <p>改寫自<strong><a href="https://github.com/SumiMakito/Awesome-qr.js">SumiMakito</a>的Awesome-qr套件</strong></p>
