@@ -16,7 +16,7 @@
           }
         </style>
          <!-- awesome-qr：QRcode生成建置 -->
-         <script type="text/javascript" src="awesome-qr/require.js"></script>
+         <script type="text/javascript" src="js/require.js"></script>
         <!-- 主js -->
         <script src="index.js"></script>
   </head>
@@ -29,60 +29,63 @@
             <div class="column">
                 <pre style="background-color: black;color: white;height: 500px;overflow: auto;">
 ///////HTML///////////////////
-< img class="ts image" style="width: 300px;height:300px;display: none;" src="06-example_resized.png" id="uploadimage">
-< img class="ts image" style="width: 311px;height:315px" src="06-QRcode_resized.jpg" id="qrcodeimage" >
+< img class="ts image" style="width: 300px;height:300px;display: none;" src="06-example_resized.png" id="example_uploadimage">
+< img class="ts image" style="width: 311px;height:315px" src="06-QRcode_resized.jpg" id="example_qrcodeimage" >
 
 ///////JS///////////////////
-function imgQRcodeCovert(QRcodeUrl){
-    if(nowLoadFileType == 'gif'){
+var __awesome_qr_base_path = "js";  ///引導路徑,一定要加入
+function imgQRcodeCovert(QRcodeUrl,PicLoadFile,PicLoadFileType){
+    if(PicLoadFileType == 'gif'){ ////GIF用
         require([__awesome_qr_base_path + '/awesome-qr'], function (AwesomeQR) {
             AwesomeQR.create({
                 text: QRcodeUrl,
                 size: 800,
                 margin: 20,
-                gifBackground: nowLoadFile, 
-                bindElement: 'qrcodeimage'
+                gifBackground: PicLoadFile, 
+                bindElement: 'example_qrcodeimage'
             });
         });  
-    }else{
+        
+    }else{  ///JPG用
         require([__awesome_qr_base_path + '/awesome-qr'], function (AwesomeQR) {
             AwesomeQR.create({
                 text: QRcodeUrl,
                 size: 800,
-                backgroundImage: document.getElementById("uploadimage"),
+                backgroundImage: document.getElementById("example_uploadimage"),
                 margin: 20,
-                bindElement: 'qrcodeimage'
+                bindElement: 'example_qrcodeimage'
             });
         });  
     }
 }
 
 ////20200304讀取上傳圖片 || Folder檔案
-var nowLoadFile ="";
-var nowLoadFileType ="";
 function filecheck(FileURL){
     ts('.snackbar').snackbar({
         content: '讀取中...'
     });
-    ///////////20200319新增 GIF 檔案內容(將Blob轉為ArrayBuffer才能讀取)
-    nowLoadFile = FileURL.files[0];
-    let reader = new FileReader();
-    reader.readAsArrayBuffer(nowLoadFile);
-    reader.onload = function () {
-        nowLoadFile = this.result;
-        nowLoadFile = new Uint8Array(nowLoadFile);
-    }
-    //////////////
-
-    nowLoadFileType = FileURL.value.split('.').pop();
+    let FileType = FileURL.value.split('.').pop();
+    let LoadFile = FileURL.files[0];
+    document.getElementById('example_qrcodeimage').src = 'loading.gif';
     ///alert(FileURL.value.split('.').pop());
-    if(nowLoadFileType == 'png' || nowLoadFileType == 'jpg' || nowLoadFileType == 'gif' || nowLoadFileType == 'jpeg' ){////檢測檔案格式(圖片)
+    if(FileType == 'png' || FileType == 'jpg' || FileType == 'jpeg' ){////檢測檔案格式(圖片)
         //alert(FileURL.value.split('.').pop());
-        document.getElementById("uploadimage").src = window.URL.createObjectURL(FileURL.files[0]);
-        document.getElementById('qrcodeimage').src = 'loading.gif';
-        imgQRcodeCovert(document.getElementById("QRcode_Url").value);
+        document.getElementById("example_uploadimage").src = window.URL.createObjectURL(FileURL.files[0]);
+        imgQRcodeCovert(document.getElementById("example_QRcode_Url").value,FileURL.files[0],FileType);
+    }else if(FileType == 'gif' ){
+        document.getElementById("example_uploadimage").src = window.URL.createObjectURL(FileURL.files[0]);
+        ///////////20200319新增 GIF 檔案內容(將Blob轉為ArrayBuffer)
+        let gitFile = '';
+        let reader = new FileReader();
+        reader.readAsArrayBuffer(LoadFile);
+        reader.onload = function () {
+            gitFile = this.result;
+            gitFile = new Uint8Array(gitFile);            
+            imgQRcodeCovert(document.getElementById("example_QRcode_Url").value,gitFile,FileType);
+        }
+        //////////////
     }else{
-        alert("尚未支援"+nowLoadFileType+"格式。");
+        alert("尚未支援"+FileType+"格式。");
     }
 }
 
@@ -97,11 +100,12 @@ function filecheck(FileURL){
                     </button>
                     <input type="file" id="ex_fileToUpload" style='display:none' onchange="filecheck(this)">
                     <div class="ts underlined input">
-                        <input id="QRcode_Url" type="text" value="https://akakaze.idv.tw/WebCoding/">
+                        <input id="example_QRcode_Url" type="text" value="https://akakaze.idv.tw/WebCoding/">
                     </div>                    
                 </div>
-                <img class="ts image" style="width: 300px;height:300px;display: none;" src="06-example_resized.png" id="uploadimage">
-                <img class="ts image" style="width: 311px;height:315px" src="06-QRcode_resized.jpg" id="qrcodeimage" >
+                <br>
+                <img class="ts image" style="width: 300px;height:300px;display: none;" src="06-example_resized.png" id="example_uploadimage">
+                <img class="ts image" style="width: 311px;height:315px" src="06-QRcode_resized.jpg" id="example_qrcodeimage" >
             </div>
         </div>
     </div>
@@ -109,7 +113,7 @@ function filecheck(FileURL){
     <div class="ts grid">
         <div class="row">
             <div class="column">
-                <img class="ts image" style="width: 200px;height:200px;transform: scaleX(-1);" src="06-example_resized.png" id="uploadimage">
+                <img class="ts image" style="width: 200px;height:200px;transform: scaleX(-1);" src="06-example_resized.png" >
             </div>
             <div class="nine wide column">
                 <!-- 標題 -->
