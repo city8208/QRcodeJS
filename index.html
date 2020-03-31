@@ -17,10 +17,11 @@
         </style>
          <!-- awesome-qr：QRcode生成建置 -->
          <script type="text/javascript" src="js/require.js"></script>
+         <script type="text/javascript" src="Qrcode-worker.js"></script>
         <!-- 主js -->
         <script src="index.js"></script>
   </head>
-  <body>
+  <body onload='unload()'>
     <div class="ts top attached small message">
         <span><i class="book icon"></i>QRcode 範例</span>
     </div>
@@ -60,6 +61,12 @@ function imgQRcodeCovert(QRcodeUrl,PicLoadFile,PicLoadFileType){
 }
 
 ////20200304讀取上傳圖片 || Folder檔案
+function unload(){
+    /////////2020.03.30 重要更新
+    ///為避免JS不同步造成的GIFE is not a constructor 問題
+    //請初次執行時先執行一次 imgQRcodeCovert jpg
+    imgQRcodeCovert(document.getElementById("example_QRcode_Url").value,document.getElementById("example_uploadimage"),'jpg');
+}
 function filecheck(FileURL){
     ts('.snackbar').snackbar({
         content: '讀取中...'
@@ -80,8 +87,8 @@ function filecheck(FileURL){
         reader.readAsArrayBuffer(LoadFile);
         reader.onload = function () {
             gitFile = this.result;
-            gitFile = new Uint8Array(gitFile);            
-            imgQRcodeCovert(document.getElementById("example_QRcode_Url").value,gitFile,FileType);
+            //gitFile = new Uint8Array(gitFile);            
+            imgQRcodeCovert(document.getElementById("example_QRcode_Url").value,Uint8Array(gitFile),FileType);
         }
         //////////////
     }else{
@@ -91,7 +98,7 @@ function filecheck(FileURL){
 
                  </pre>
                 </div>
-            
+            <!-- awesome-qr：QRcode生成建置 -->
             <div class="column" style="background-color: black;max-height: 500px;overflow:auto;top:20px">
                 <div class="ts labeled button">
                     <button class="ts button" onclick="document.getElementById('ex_fileToUpload').click();">
@@ -104,8 +111,7 @@ function filecheck(FileURL){
                     </div>                    
                 </div>
                 <br>
-                <img class="ts image" style="width: 300px;height:300px;display: none;" src="06-example_resized.png" id="example_uploadimage">
-                <img class="ts image" style="width: 311px;height:315px" src="06-QRcode_resized.jpg" id="example_qrcodeimage" >
+                <div id='QrcodeSet' class="section clearfix" ></div>
             </div>
         </div>
     </div>
@@ -113,7 +119,7 @@ function filecheck(FileURL){
     <div class="ts grid">
         <div class="row">
             <div class="column">
-                <img class="ts image" style="width: 200px;height:200px;transform: scaleX(-1);" src="06-example_resized.png" >
+                <img class="ts image" style="width: 200px;height:200px;transform: scaleX(-1);" src="js/06-example_resized.png" >
             </div>
             <div class="nine wide column">
                 <!-- 標題 -->
