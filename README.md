@@ -6,8 +6,7 @@ input file 格式為Blob，因此加入Blob轉ArrayBuffer方法，
 
 當前版本已針對目前瀏覽器版本做優化及改良。
 
-若這邊不夠清晰，可至Github 觀看。
-
+想測試功能的話，可至<a href="https://akakaze.idv.tw/WebCoding/">官網</a> 試試。
 
 # 撰寫方式
 ```html
